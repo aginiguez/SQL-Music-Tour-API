@@ -1,20 +1,12 @@
 // DEPENDENCIES
 const express = require('express')
 const app = express()
-const { Sequelize } = require ('sequelize')
+const { Sequelize } = require('sequelize')
 
 // CONFIGURATION / MIDDLEWARE
 require('dotenv').config()
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
-
-const sequelize = new Sequelize(process.env.PG_URI)
-try {
-sequelize.authenticate().then(() => {   
-    console.log(`Connected to the database, ${process.env.PG_URI}${process.env.PG_URI}`)
-}).catch(err => {
-    console.log(`Error connecting to the database: `, err)
-})
 
 // ROOT
 app.get('/', (req, res) => {
@@ -22,6 +14,14 @@ app.get('/', (req, res) => {
         message: 'Welcome to the Tour API'
     })
 })
+
+// CONTROLLERS
+const bandController = require('./controllers/band_controller')
+app.use('/band', bandController)
+const eventController = require('./controllers/event_controller')
+app.use('/event', eventController)
+const stageController = require('./controllers/stage_controller')
+app.use('/stage', stageController)
 
 // LISTEN
 app.listen(process.env.PORT, () => {
